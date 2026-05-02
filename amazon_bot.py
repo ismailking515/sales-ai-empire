@@ -4,7 +4,7 @@ import google.generativeai as genai
 
 # Setup AI Brain
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 def search_for_leads():
     # In a full version, this uses the Reddit/Twitter API. 
