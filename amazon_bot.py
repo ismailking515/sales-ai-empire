@@ -18,15 +18,16 @@ X_PASSWORD = os.environ.get("X_PASSWORD") # Pulls secretly from GitHub
 print("System: Initializing Cloud-Based Universal Viral Product Sniper...")
 client = Groq(api_key=GROQ_API_KEY)
 
-def log_to_boss(platform, product_identified, amazon_link):
+def log_to_boss(platform, buyer_name, product_identified, amazon_link, status):
     file_exists = os.path.isfile('daily_sales.csv')
     with open('daily_sales.csv', mode='a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
+        # We upgraded the columns to include Buyer Name and Status
         if not file_exists:
-            writer.writerow(['Date', 'Platform', 'Product Identified', 'Amazon Link', 'Status'])
-        writer.writerow([datetime.now().strftime("%Y-%m-%d %H:%M"), platform, product_identified, amazon_link, 'CLOUD STRIKE DEPLOYED'])
-    print(f"Boss: CLOUD sale deployed and logged to Excel!")
-
+            writer.writerow(['Date', 'Platform', 'Buyer Name', 'Product', 'Link', 'Status'])
+        writer.writerow([datetime.now().strftime("%Y-%m-%d %H:%M"), platform, buyer_name, product_identified, amazon_link, status])
+    print(f"Boss: Logged interaction with {buyer_name} to Excel!")
+    
 def run_cloud_sniper():
     print("System: Waking up the GitHub Cloud Browser...")
     
