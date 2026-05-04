@@ -97,8 +97,13 @@ def run_cloud_sniper():
             response = chat_completion.choices[0].message.content.strip()
             
             if response.upper() == "NO" or "NO\n" in response.upper():
-                print("Result: Not a physical product buyer. Shutting down.")
-                return
+                    print("Result: Not a physical product buyer. Sleeping for 2 minutes...")
+                    
+                    # RADAR UPGRADE: Log the rejected target so your CSV always updates
+                    log_to_boss('X (Twitter)', buyer_name, 'N/A', 'N/A', 'Rejected - Not a Buyer')
+                    
+                    time.sleep(120) # Wait 2 minutes before searching again
+                    continue
                 
             lines = response.split('\n')
             product_search_term = lines[0].replace(" ", "+").replace("YES", "").strip()
