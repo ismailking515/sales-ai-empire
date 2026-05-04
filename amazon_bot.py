@@ -77,8 +77,7 @@ def run_cloud_sniper():
             If NO, reply exactly 'NO'.
             If they ARE asking for a product, DO NOT SAY THE WORD 'YES'. Reply with EXACTLY two lines:
             Line 1: A 2-3 word search term for the EXACT physical product they want.
-            Line 2: A short, friendly 1-sentence reply saying you just updated your list of top picks, including this link: {BRIDGE_PAGE_LINK}
-            Tweet: {tweet_text}
+            Line 2: A short, friendly 1-sentence reply saying you found a great deal, including exactly this link: {BRIDGE_PAGE_LINK}?deal=[INSERT_SEARCH_TERM_HERE]Tweet: {tweet_text}
             """
             
             chat_completion = client.chat.completions.create(
