@@ -2,7 +2,7 @@ name: 24/7 Amazon X-Sniper
 
 on:
   schedule:
-    - cron: '0 * * * *' # Runs at the top of every hour
+    - cron: '*/20 * * * *' # Runs at the top of every hour
   workflow_dispatch: 
 
 jobs:
