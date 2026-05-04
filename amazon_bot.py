@@ -68,7 +68,7 @@ def run_cloud_sniper():
                 print("No targets found this cycle. Shutting down.")
                 return
 
-            tweet = page.locator("article").nth(0)
+                tweet = page.locator("article").nth(0)
                 tweet_text = tweet.inner_text()
                 
                 # ADVANCED UPGRADE: Scrape the buyer's username from the tweet
