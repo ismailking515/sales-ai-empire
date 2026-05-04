@@ -1,44 +1,119 @@
 import os
-from google import genai
+import csv
+import time
+import random
+from datetime import datetime
+from groq import Groq
+from playwright.sync_api import sync_playwright
 
-# Use the 2026 Modern Client
-client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+# --- 1. CONFIGURATION ---
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY") # Pulls secretly from GitHub
+AMAZON_TAG = "ismail-21" 
+BRIDGE_PAGE_LINK = "https://ismailking515.github.io/sales-ai-empire/"
 
-def get_best_model():
-    """Automatically finds the best available Flash model to avoid 404 errors."""
-    try:
-        # Check for 3.1 first, then fallback to 2.0 or 1.5
-        for model_name in ["gemini-3.1-flash", "gemini-2.0-flash", "gemini-1.5-flash"]:
-            try:
-                client.models.get(model=model_name)
-                print(f"USING MODEL: {model_name}")
-                return model_name
-            except:
-                continue
-        return "gemini-1.5-flash" # Absolute fallback
-    except:
-        return "gemini-1.5-flash"
+# --- 2. YOUR X (TWITTER) LOGIN ---
+X_USERNAME = os.environ.get("X_USERNAME") # Pulls secretly from GitHub
+X_PASSWORD = os.environ.get("X_PASSWORD") # Pulls secretly from GitHub
 
-def search_for_leads():
-    return "I need a high-performance laptop for video editing under $1500."
+print("System: Initializing Cloud-Based Universal Viral Product Sniper...")
+client = Groq(api_key=GROQ_API_KEY)
 
-def check_intent(post_text, model_id):
-    response = client.models.generate_content(
-        model=model_id,
-        contents=f"Is this person looking for a laptop recommendation? Answer only YES or NO: {post_text}"
-    )
-    return response.text.strip().upper()
+def log_to_boss(platform, product_identified, amazon_link):
+    file_exists = os.path.isfile('daily_sales.csv')
+    with open('daily_sales.csv', mode='a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        if not file_exists:
+            writer.writerow(['Date', 'Platform', 'Product Identified', 'Amazon Link', 'Status'])
+        writer.writerow([datetime.now().strftime("%Y-%m-%d %H:%M"), platform, product_identified, amazon_link, 'CLOUD STRIKE DEPLOYED'])
+    print(f"Boss: CLOUD sale deployed and logged to Excel!")
 
-def find_viral_product():
-    amazon_tag = os.environ["AMAZON_TAG"]
-    return f"https://www.amazon.com/dp/B0CX258XN6?tag={amazon_tag}"
+def run_cloud_sniper():
+    print("System: Waking up the GitHub Cloud Browser...")
+    
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
+            headless=True, # Must be True for GitHub servers
+            args=["--disable-blink-features=AutomationControlled"]
+        )
+        context = browser.new_context(viewport={'width': 1280, 'height': 720})
+        page = context.new_page()
+        page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
-# Main Sales Logic
-best_model = get_best_model()
-lead = search_for_leads()
+        try:
+            # --- PHASE 1: CLOUD LOGIN ---
+            print("Action: Navigating to X.com...")
+            page.goto("https://x.com/login")
+            time.sleep(random.uniform(5, 7))
 
-if "YES" in check_intent(lead, best_model):
-    product_link = find_viral_product()
-    print(f"SALES TARGET FOUND: {product_link}")
-else:
-    print("No buyer found this hour. Waiting for next cycle...")
+            print("Action: Entering credentials...")
+            page.locator("input[autocomplete='username']").fill(X_USERNAME)
+            page.keyboard.press("Enter")
+            time.sleep(random.uniform(3, 5))
+            
+            page.locator("input[name='password']").fill(X_PASSWORD)
+            page.keyboard.press("Enter")
+            print("Action: Logging in...")
+            time.sleep(random.uniform(6, 9))
+
+            # --- PHASE 2: UNIVERSAL HUNTING ---
+            search_query = '("recommend a good" OR "looking to buy a" OR "need a new") ? -filter:links -filter:replies'
+            search_url = f"https://x.com/search?q={search_query}&f=live"
+            
+            print("Action: Scanning global X feed for buyers...")
+            page.goto(search_url)
+            time.sleep(random.uniform(5, 8))
+
+            if page.locator("article").count() == 0:
+                print("No targets found this cycle. Shutting down.")
+                return
+
+            tweet = page.locator("article").nth(0)
+            tweet_text = tweet.inner_text()
+            print(f"Target Locked: \n{tweet_text[:100]}...\n")
+
+            # --- PHASE 3: THE AI BRAIN ---
+            prompt = f"""
+            Analyze this tweet. Is the user asking for a recommendation for a physical product they want to buy?
+            If NO, reply exactly 'NO'.
+            If they ARE asking for a product, DO NOT SAY THE WORD 'YES'. Reply with EXACTLY two lines:
+            Line 1: A 2-3 word search term for the EXACT physical product they want.
+            Line 2: A short, friendly 1-sentence reply saying you just updated your list of top picks, including this link: {BRIDGE_PAGE_LINK}
+            Tweet: {tweet_text}
+            """
+            
+            chat_completion = client.chat.completions.create(
+                messages=[{"role": "user", "content": prompt}],
+                model="llama-3.1-8b-instant",
+            )
+            
+            response = chat_completion.choices[0].message.content.strip()
+            
+            if response.upper() == "NO" or "NO\n" in response.upper():
+                print("Result: Not a physical product buyer. Shutting down.")
+                return
+                
+            lines = response.split('\n')
+            product_search_term = lines[0].replace(" ", "+").replace("YES", "").strip()
+            suggested_reply = lines[1] if len(lines) > 1 else f"I just updated my list of top picks here: {BRIDGE_PAGE_LINK}"
+            amazon_link = f"https://www.amazon.com/s?k={product_search_term}&tag={AMAZON_TAG}"
+
+            # --- PHASE 4: THE LIVE STRIKE ---
+            print(f"Action: Deploying live reply for '{product_search_term}'...")
+            tweet.locator("[data-testid='reply']").click()
+            time.sleep(random.uniform(2, 4))
+            page.locator("[data-testid='tweetTextarea_0']").fill(suggested_reply)
+            time.sleep(random.uniform(1, 3))
+            
+            page.locator("[data-testid='tweetButton']").click() 
+            time.sleep(random.uniform(3, 5))
+            
+            print("🚨 SUCCESS: CLOUD STRIKE DEPLOYED TO THE INTERNET! 🚨")
+            log_to_boss('X (Twitter)', product_search_term, amazon_link)
+
+        except Exception as e:
+            print(f"Cloud Execution Error: {e}")
+        finally:
+            browser.close()
+
+if __name__ == "__main__":
+    run_cloud_sniper()
