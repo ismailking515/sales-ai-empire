@@ -8,7 +8,7 @@ from playwright.sync_api import sync_playwright
 
 # --- 1. CONFIGURATION ---
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY") # Pulls secretly from GitHub
-AMAZON_TAG = "ismail-21" 
+AMAZON_TAG = "63003-21" 
 BRIDGE_PAGE_LINK = "https://ismailking515.github.io/sales-ai-empire/"
 
 # --- 2. YOUR X (TWITTER) LOGIN ---
