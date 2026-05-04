@@ -69,8 +69,16 @@ def run_cloud_sniper():
                 return
 
             tweet = page.locator("article").nth(0)
-            tweet_text = tweet.inner_text()
-            print(f"Target Locked: \n{tweet_text[:100]}...\n")
+                tweet_text = tweet.inner_text()
+                
+                # ADVANCED UPGRADE: Scrape the buyer's username from the tweet
+                try:
+                    buyer_name = tweet.locator("div[dir='ltr']").nth(0).inner_text()
+                except:
+                    buyer_name = "Unknown_Target"
+                    
+                print(f"Target Locked: {buyer_name}")
+                print(f"Target Locked: \n{tweet_text[:100]}...\n")
 
             # --- PHASE 3: THE AI BRAIN ---
             prompt = f"""
@@ -108,7 +116,7 @@ def run_cloud_sniper():
             time.sleep(random.uniform(3, 5))
             
             print("🚨 SUCCESS: CLOUD STRIKE DEPLOYED TO THE INTERNET! 🚨")
-            log_to_boss('X (Twitter)', product_search_term, amazon_link)
+            log_to_boss('X (Twitter)', buyer_name, product_search_term, amazon_link, 'Link Sent - Waiting for Click')
 
         except Exception as e:
             print(f"Cloud Execution Error: {e}")
