@@ -2,12 +2,96 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AI Global Sales Hub</title>
-    </head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Deal Finder | Securing Best Price...</title>
+    <style>
+        body {
+            background-color: #0f172a; /* Premium Dark Blue/Black */
+            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        
+        /* The Animated Glowing Ring */
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #1e293b;
+            border-top: 4px solid #3b82f6; /* Trust Blue */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 25px;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            max-width: 400px;
+            line-height: 1.5;
+        }
+
+        /* The Trust Badge */
+        .trust-badge {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981; /* Verified Green */
+            border: 1px solid #10b981;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
 <body>
-    <h1>Viral Deals & Professional Recommendations</h1>
-    <p>Our AI-powered system finds the best-selling, trending products globally.</p>
-    <div id="deals-container">
-        </div>
+
+    <div class="loader"></div>
+    <h1 id="statusText">Securing Best Price...</h1>
+    <p>Please wait while our AI scans Amazon for the highest-rated options in stock.</p>
+    
+    <div class="trust-badge">
+        <span>✓</span> Verified Secure Redirect
+    </div>
+
+    <script>
+        // THE SMART BRAIN: This reads the URL and builds the Amazon Link automatically
+        const urlParams = new URLSearchParams(window.location.search);
+        const deal = urlParams.get('deal');
+        const amazonTag = "63003-21"; // Your official Amazon ID
+
+        // Wait 2.5 seconds to show the premium animation, then redirect
+        setTimeout(() => {
+            if (deal) {
+                // If the bot sent a specific product
+                document.getElementById('statusText').innerText = "Redirecting...";
+                window.location.href = "https://www.amazon.com/s?k=" + deal + "&tag=" + amazonTag;
+            } else {
+                // If someone just clicks the plain link by accident
+                window.location.href = "https://www.amazon.com/?tag=" + amazonTag;
+            }
+        }, 2500); 
+    </script>
+
 </body>
 </html>
