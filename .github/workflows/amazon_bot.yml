@@ -1,29 +1,38 @@
-name: 24/7 Amazon Sales Worker
+name: 24/7 Amazon X-Sniper
 
 on:
   schedule:
-    # This tells GitHub to run your bot at the start of every hour (:00)
-    - cron: '0 * * * *' 
-  workflow_dispatch: # This allows you to run it manually for testing
+    - cron: '0 * * * *' # Runs at the top of every hour
+  workflow_dispatch: 
 
 jobs:
-  build:
+  run-bot:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/checkout@v4
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
       - name: Install Dependencies
         run: |
-          pip install google-genai requests
+          pip install -r requirements.txt
+          playwright install chromium
 
-      - name: Run Amazon Bot
+      - name: Deploy Strike
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          AMAZON_TAG: ${{ secrets.AMAZON_TAG }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          X_USERNAME: ${{ secrets.X_USERNAME }}
+          X_PASSWORD: ${{ secrets.X_PASSWORD }}
         run: python amazon_bot.py
+
+      - name: Save Sales Data
+        run: |
+          git config --global user.name 'AI Sales Bot'
+          git config --global user.email 'bot@salesempire.com'
+          git add daily_sales.csv
+          git commit -m "Logged new sale from Cloud Strike" || exit 0
+          git push
