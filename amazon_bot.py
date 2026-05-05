@@ -47,6 +47,7 @@ def run_cloud_sniper():
             if page.locator("article").count() > 0:
                 tweet = page.locator("article").nth(0)
                 tweet_text = tweet.inner_text()
+                # Scrape the buyer's username
                 try:
                     buyer_name = tweet.locator("div[dir='ltr']").nth(0).inner_text()
                 except:
