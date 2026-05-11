@@ -31,9 +31,17 @@ def hunt_stack_exchange():
         buyer_name = item['owner']['display_name']
         post_text = item['title']
         
-        # Groq decides if they are ready to buy
-        prompt = f"Analyze this tech question: '{post_text}'. Is this person looking for a hardware recommendation? If YES, reply with the product name and a 1-sentence helpful tip including this link: {BRIDGE_PAGE_LINK}?deal=PRODUCT. If NO, reply NO."
+        # UPGRADED HUNTER PROMPT
+        prompt = f"""
+        Analyze this post: '{post_text}'. 
+        Even if they aren't explicitly asking to buy, identify the #1 best physical product 
+        that would solve their problem.
         
+        Reply with EXACTLY two lines:
+        Line 1: The name of that specific product.
+        Line 2: A helpful, 1-sentence expert recommendation including this link: 
+        {BRIDGE_PAGE_LINK}?deal=[PRODUCT_NAME]
+        """
         # [The AI Brain Logic matches your Amazon Bot here]
         # ... (Bot identifies product, generates link, and logs to CSV)
         log_to_boss('Stack Exchange', buyer_name, 'Pro Laptop', 'Link Generated', 'Expert Lead Found')
