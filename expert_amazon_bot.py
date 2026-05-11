@@ -2,7 +2,7 @@ import os
 import csv
 import requests
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from groq import Groq
 
 # --- CONFIGURATION ---
@@ -20,7 +20,11 @@ def log_to_boss(platform, buyer_name, product_identified, amazon_link, status):
         writer = csv.writer(file)
         if not file_exists:
             writer.writerow(['Date', 'Platform', 'Buyer Name', 'Product', 'Link', 'Status'])
-        writer.writerow([datetime.now().strftime("%Y-%m-%d %H:%M"), platform, buyer_name, product_identified, amazon_link, status])
+            
+        # --- THE PRO TIME FIX ---
+        # Adjusts UTC time by +5.5 hours for IST (India Standard Time)
+        local_time = (datetime.utcnow() + timedelta(hours=5.5)).strftime("%Y-%m-%d %H:%M")
+        writer.writerow([local_time, platform, buyer_name, product_identified, amazon_link, status])
 
 def hunt_stack_exchange():
     print("Action: Scanning Stack Exchange for technical buying questions...")
